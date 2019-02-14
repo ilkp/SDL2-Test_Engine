@@ -102,8 +102,6 @@ void Logic::handleEvents()
 void Logic::update()
 {
 	playerMovement->update(keyFlags);
-	std::cout << elapsedTime/1000.0f << "ms    " << keyFlags[0] << "  " << keyFlags[1] << "  " << keyFlags[2] << "  " << keyFlags[3] << std::endl;
-	/*
 	Vector2 forceSum;
 	Vector2 acceleration;
 	Vector2 newVelocity;
@@ -125,16 +123,14 @@ void Logic::update()
 			forceSum = forceSum + forceVector;
 		}
 		acceleration = forceSum / objectParameters[0];
-		std::cout << objectParameters[0] << "\t" << objectParameters[1] << "\t" << objectParameters[2]
-			<< "\t" << objectParameters[3] << "\t" << objectParameters[4] << std::endl;
 		newVelocity = Vector2(objectParameters[3], objectParameters[4]) + acceleration * elapsedTimef;
 		(*it)->setVelocity(newVelocity);
-		(*it)->translate(Vector2(objectParameters[1], objectParameters[2])
-			+ newVelocity * elapsedTimef
-			+ acceleration * 0.5f * elapsedTimef * elapsedTimef);
+		(*it)->translate(newVelocity * 200.0f);
+
 		delete[](objectParameters);
+		(*it)->clearForceVectors();
 	}
-	*/
+	
 }
 
 void Logic::render()
