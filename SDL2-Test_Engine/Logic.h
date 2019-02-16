@@ -4,6 +4,7 @@
 #include "PhysicsObject.h"
 #include "include/SDL.h"
 #include "PlayerMovement.h"
+#include "Physics.h"
 
 class Logic
 {
@@ -15,10 +16,12 @@ private:
 	SDL_Renderer* renderer;
 	std::list<PhysicsObject*> physicsObjects = {};
 	SDL_Rect player;
+	SDL_Rect other;
 	unsigned elapsedTime = 0;
 	float gravity = 9.81f;
 	float gravityScale = 1.0f;
 	int keyFlags[4] = { 0, 0, 0, 0 };
+	Physics physics;
 
 public:
 	Logic();

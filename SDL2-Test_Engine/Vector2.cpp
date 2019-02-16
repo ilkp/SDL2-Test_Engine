@@ -48,6 +48,14 @@ Vector2 Vector2::operator+(const Vector2& other)
 	return newVector;
 }
 
+Vector2 Vector2::operator-(const Vector2& other)
+{
+	Vector2 newVector;
+	newVector.components[0] = this->components[0] - other.components[0];
+	newVector.components[1] = this->components[1] - other.components[1];
+	return newVector;
+}
+
 Vector2 Vector2::operator/(const float divider)
 {
 	Vector2 newVector;

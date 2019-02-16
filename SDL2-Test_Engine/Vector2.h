@@ -13,6 +13,7 @@ public:
 	void setX(float component);
 	void setY(float component);
 	Vector2 operator+(const Vector2& other);
+	Vector2 operator-(const Vector2& other);
 	Vector2 operator/(const float divider);
 	Vector2 operator*(const float multiplier);
 	Vector2& operator=(const Vector2& other);

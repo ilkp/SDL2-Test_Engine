@@ -1,6 +1,7 @@
 #include "Logic.h"
 
 #include <iostream>
+#include <vector>
 
 Logic::Logic()
 {
@@ -40,10 +41,19 @@ int Logic::initialize(int xPos, int yPos, int width, int height)
 	player.w = 20;
 	player.h = 20;
 	origo = Vector2(width / 2, height / 2);
-	physicsObjects.push_back(new PhysicsObject(Vector2(0.0f, 0.0f), 80.0f));
+	physicsObjects.push_back(new PhysicsObject(false, Vector2(0.0f, 0.0f), 80.0f));
 	physicsObjects.front()->setTag("player");
 
+	physicsObjects.front()->setHitbox({-10, -10}, {10, -10}, {-10, 10}, {10, 10});
 	playerMovement = new PlayerMovement(physicsObjects.front());
+
+	PhysicsObject* otherTest = new PhysicsObject(true, Vector2(20.0f, 20.0f), 80);
+	otherTest->setPosition(Vector2(20.0f, 20.0f));
+	otherTest->setHitbox({ -10, -10 }, { 10, -10 }, { -10, 10 }, { 10, 10 });
+	otherTest->clearForceVectors();
+	physicsObjects.push_back(otherTest);
+	other.w = 20;
+	other.h = 20;
 
 	return 0;
 }
@@ -102,35 +112,8 @@ void Logic::handleEvents()
 void Logic::update()
 {
 	playerMovement->update(keyFlags);
-	Vector2 forceSum;
-	Vector2 acceleration;
-	Vector2 newVelocity;
-	std::list<Vector2> forceVectors;
-	float* objectParameters;
-	float elapsedTimef = elapsedTime / 1000.0f;
-	for (auto it = physicsObjects.begin(); it != physicsObjects.end(); it++)
-	{
-		objectParameters = (*it)->physicsObjectOut();
-		// objectParameters:
-		// 0 -> mass
-		// 1 -> position X
-		// 2 -> position Y
-		// 3 -> velocity X
-		// 4 -> velocity Y
-		forceSum = Vector2(0.0f, 0.0f);
-		forceVectors = (*it)->getForceVectors();
-		for (Vector2 forceVector : forceVectors) {
-			forceSum = forceSum + forceVector;
-		}
-		acceleration = forceSum / objectParameters[0];
-		newVelocity = Vector2(objectParameters[3], objectParameters[4]) + acceleration * elapsedTimef;
-		(*it)->setVelocity(newVelocity);
-		(*it)->translate(newVelocity * 200.0f);
-
-		delete[](objectParameters);
-		(*it)->clearForceVectors();
-	}
-	
+	physics.calcPhysics(elapsedTime, physicsObjects);
+	physics.handleCollisions(physicsObjects);
 }
 
 void Logic::render()
@@ -141,6 +124,9 @@ void Logic::render()
 
 	player.x = int(origo.getX() + physicsObjects.front()->getPosition().getX());
 	player.y = int(origo.getY() + physicsObjects.front()->getPosition().getY());
+	other.x = int(origo.getX() + physicsObjects.back()->getPosition().getX());
+	other.y = int(origo.getY() + physicsObjects.back()->getPosition().getY());
 	SDL_RenderDrawRect(renderer, &player);
+	SDL_RenderDrawRect(renderer, &other);
 	SDL_RenderPresent(renderer);
 }

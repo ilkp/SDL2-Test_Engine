@@ -4,7 +4,6 @@
 #include "include/SDL.h"
 #include "..\SDL2-2.0.9\include\SDL.h"
 
-#define SDL_MAIN_HANDLED
 
 int main(int argc, char* argv[])
 {
@@ -15,7 +14,6 @@ int main(int argc, char* argv[])
 
 	Logic* game = new Logic();
 	game->initialize(100, 100, 800, 600);
-
 	while (!game->getUserQuit())
 	{
 		frameStart = SDL_GetTicks();
