@@ -47,6 +47,10 @@ void Physics::calcPhysics(const unsigned elapsedTime, std::list<PhysicsObject*> 
 void Physics::handleCollisions(std::list<PhysicsObject*> objects)
 {
 	float myStartX, myEndX, myStartY, myEndY, otherStartX, otherEndX, otherStartY, otherEndY;
+	float penDepthX = 0.0f;
+	float penDepthY = 0.0f;
+	int penDirectionX = 0;
+	int penDirectionY = 0;
 	for (auto it = objects.begin(); it != objects.end(); it++)
 	{
 		if (!(*it)->getIsStatic())
@@ -65,8 +69,37 @@ void Physics::handleCollisions(std::list<PhysicsObject*> objects)
 				otherEndY = (*it2)->getPosition().getY() + (*it)->getHitbox()[BOTTOM_RIGHT].y;
 				if (!(myStartX > otherEndX || myEndX < otherStartX || myStartY > otherEndY || myEndY < otherStartY))
 				{
+					if ((*it)->getVelocity().getX() > 0)
+					{
+						penDepthX = myEndX - otherStartX;
+						penDirectionX = -1;
+					}
+					else if ((*it)->getVelocity().getX() < 0) {
+						penDepthX = otherEndX - myStartX;
+						penDirectionX = 1;
+					}
+					if ((*it)->getVelocity().getY() > 0)
+					{
+						penDepthY = myEndY - otherStartY;
+						penDirectionY = -1;
+					}
+					else if ((*it)->getVelocity().getY() < 0) {
+						penDepthY = otherEndY - myStartY;
+						penDirectionY = 1;
+					}
+					if (penDepthX < penDepthY)
+					{
+						(*it)->setPosition(Vector2((*it)->getPosition().getX() + (penDirectionX * penDepthX)
+							, (*it)->getPosition().getY()));
+						(*it)->setVelocity(Vector2(0.0f, (*it)->getVelocity().getY()));
+					}
+					else {
+						(*it)->setPosition(Vector2((*it)->getPosition().getX()
+							, (*it)->getPosition().getY() + (penDirectionY * penDepthY)));
+						(*it)->setVelocity(Vector2((*it)->getVelocity().getX(), 0.0f));
+					}
+
 					std::cout << "HIT" << std::endl;
-					(*it)->setVelocity((*it)->getVelocity() * -1.0f);
 				}
 				else {
 					std::cout << "-" << std::endl;
